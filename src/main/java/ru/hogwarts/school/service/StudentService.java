@@ -3,15 +3,13 @@ package ru.hogwarts.school.service;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.model.Student;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 
 public class StudentService {
-    private Map<Long, Student> students = new HashMap<>();
+    private final Map<Long, Student> students = new HashMap<>();
     private Long generatedStudentId = 1L;
 
     public Student createStudent(Student student) {
@@ -33,16 +31,10 @@ public class StudentService {
         return students.remove(studentId);
     }
 
-    public Set<Student> findStudentsWithFindingAge(int age) {
-        Set<Student> studentsWithFindingAge = new HashSet<>();
-        for (Student student : students.values()) {
-            if (student.getAge() == age) {
-                studentsWithFindingAge.add(student);
-            }
-        }
-        if (studentsWithFindingAge == null) {
-            throw new NotFoundException("студентов с таким возрастом нет");
-        }
+    public Collection<Student> findStudentsWithFindingAge(int age) {
+        Collection<Student> studentsWithFindingAge = students.values().stream()
+                .filter(faculty -> faculty.getAge() == age)
+                .collect(Collectors.toList());
         return studentsWithFindingAge;
     }
 }

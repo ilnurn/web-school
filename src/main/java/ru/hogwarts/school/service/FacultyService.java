@@ -3,15 +3,13 @@ package ru.hogwarts.school.service;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.model.Faculty;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 
 public class FacultyService {
-    private Map<Long, Faculty> faculties = new HashMap<>();
+    private final Map<Long, Faculty> faculties = new HashMap<>();
     private Long generatedFacultyId = 1L;
 
     public Faculty createFaculty(Faculty faculty) {
@@ -33,16 +31,10 @@ public class FacultyService {
         return faculties.remove(facultyId);
     }
 
-    public Set<Faculty> findFacultiesByColor(String colour) {
-        Set<Faculty> facultiesWithFindingColour = new HashSet<>();
-        for (Faculty faculty : faculties.values()) {
-            if (faculty.getColor().equals(colour)) {
-                facultiesWithFindingColour.add(faculty);
-            }
-        }
-        if (facultiesWithFindingColour == null) {
-            throw new NotFoundException("факультетов с таким цветом нет");
-        }
+    public Collection<Faculty> findFacultiesByColor(String colour) {
+        Collection<Faculty> facultiesWithFindingColour = faculties.values().stream()
+                .filter(faculty -> faculty.getColor().equals(colour))
+                .collect(Collectors.toList());
         return facultiesWithFindingColour;
     }
 }
